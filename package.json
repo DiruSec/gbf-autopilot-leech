@@ -1,0 +1,23 @@
+{
+  "name": "gbf-autopilot-leech",
+  "version": "1.0.0",
+  "description": "Raid leeching extension for Granblue Autopilot",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Frizz925/gbf-autopilot-leech.git"
+  },
+  "author": "Frizz925 <Frizz925@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Frizz925/gbf-autopilot-leech/issues"
+  },
+  "homepage": "https://github.com/Frizz925/gbf-autopilot-leech#readme",
+  "devDependencies": {
+    "eslint": "^4.17.0"
+  },
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "gbf-raidfinder": "github:frizz925/gbf-raidfinder-js"
+  }
+}
