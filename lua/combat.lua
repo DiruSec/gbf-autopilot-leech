@@ -1,3 +1,3 @@
 function TerminateBattle()
-  return success_handler(true)
+  return success_handler(false)
 end
