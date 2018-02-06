@@ -66,3 +66,26 @@ configs/Leech/CelesteHL.json
   "Party.Set": "A"
 }
 ```
+
+scripts/Leech.lua
+
+```lua
+character_1:UseSkill(2)
+    :UseSkill(1)
+    :UseSkill(3)
+    :UseSkill(4)
+character_2:UseSkill(1)
+    :UseSkill(2)
+    :UseSkill(3)
+character_3:UseSkill(1)
+    :UseSkill(2)
+character_4:UseSkill(1)
+    :UseSkill(2)
+    :UseSkill(3)
+
+Summon(6)
+
+Attack()
+Wait(2400)
+TerminateBattle()
+```
