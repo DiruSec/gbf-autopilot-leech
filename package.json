@@ -18,6 +18,6 @@
   },
   "dependencies": {
     "dotenv": "^4.0.0",
-    "gbf-raidfinder": "github:frizz925/gbf-raidfinder-js"
+    "gbf-raidfinder": "^1.0.0"
   }
 }
