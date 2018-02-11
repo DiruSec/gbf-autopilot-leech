@@ -68,7 +68,11 @@ exports = module.exports = (
   const enterBattle = steps =>
     exec([
       Wait('.atx-lead-link'),
-      () => exec(DefaultPipeline()),
+      () =>
+        exec(DefaultPipeline()).catch(err => {
+          logger.warn(err);
+          return false;
+        }),
       () => exec(steps)
     ]);
 
@@ -119,8 +123,8 @@ exports = module.exports = (
     } else if (result.indexOf('refill') >= 0) {
       return refillBP(steps);
     } else {
-      logger.error('Unknown join raid status:', result);
-      return false;
+      logger.warn('Unknown join raid status:', result);
+      return exec(steps);
     }
   };
 
