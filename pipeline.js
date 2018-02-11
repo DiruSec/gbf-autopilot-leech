@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const Raidfinder = require('gbf-raidfinder');
 const Queue = require('./queue');
 const raidfinder = new Raidfinder();
@@ -14,7 +12,7 @@ function destroyStream() {
 
 exports = module.exports = (
   env,
-  config,
+  scenarioConfig,
   server,
   logger,
   requireCore,
@@ -37,11 +35,8 @@ exports = module.exports = (
 
   const queue = new Queue(100);
 
-  const configPath = path.resolve(server.rootDir, config.General.Config);
-  const leechConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-
-  const raidTimeout = leechConfig['Raid.Timeout'];
-  const bosses = leechConfig['Raid.Bosses'];
+  const raidTimeout = scenarioConfig.get('Raid.Timeout');
+  const bosses = scenarioConfig.get('Raid.Bosses');
   if ($stream) destroyStream();
 
   process.nextTick(() => {
@@ -56,13 +51,13 @@ exports = module.exports = (
     });
   });
 
-  env.partyGroup = leechConfig['Party.Group'];
-  env.partyDeck = leechConfig['Party.Deck'];
-  env.partySet = leechConfig['Party.Set'];
-  env.summonPreferred = leechConfig['Summon.Preferred'];
-  env.summonAttribute = leechConfig['Summon.Attribute'];
-  env.summonReroll = leechConfig['Summon.Reroll'];
-  env.luaScript = leechConfig['Lua.Script'];
+  env.partyGroup = scenarioConfig.get('Party.Group');
+  env.partyDeck = scenarioConfig.get('Party.Deck');
+  env.partySet = scenarioConfig.get('Party.Set');
+  env.summonPreferred = scenarioConfig.get('Summon.Preferred');
+  env.summonAttribute = scenarioConfig.get('Summon.Attribute');
+  env.summonReroll = scenarioConfig.get('Summon.Reroll');
+  env.luaScript = scenarioConfig.get('Lua.Script');
   env.questMax = 1;
 
   const enterBattle = steps =>
@@ -153,11 +148,12 @@ exports = module.exports = (
   const steps = [() => checkTreasure(steps)];
   return steps;
 };
-exports.test = config => config.General.Mode === 'Leech';
+exports.test = (config, scenarioConfig) =>
+  scenarioConfig.get('Mode') === 'Leech';
 exports['@name'] = 'Leech';
 exports['@require'] = [
   'env',
-  'config',
+  'scenarioConfig',
   'server',
   'logger',
   'require',
