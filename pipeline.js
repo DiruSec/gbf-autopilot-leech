@@ -4,6 +4,7 @@ const raidfinder = new Raidfinder();
 const noop = () => {};
 
 var $stream;
+
 function destroyStream() {
   if (!$stream) return;
   $stream.destroy();
@@ -14,6 +15,7 @@ exports = module.exports = (
   env,
   scenarioConfig,
   server,
+  worker,
   logger,
   requireCore,
   run,
@@ -37,7 +39,12 @@ exports = module.exports = (
 
   const raidTimeout = scenarioConfig.get('Raid.Timeout');
   const bosses = scenarioConfig.get('Raid.Bosses');
+
   if ($stream) destroyStream();
+  const subscription = worker.on('stop', () => {
+    if ($stream) destroyStream();
+    subscription.unsubscribe();
+  });
 
   process.nextTick(() => {
     $stream = raidfinder.stream(bosses, (err, tweet, stream) => {
@@ -82,7 +89,8 @@ exports = module.exports = (
           run(Location.Change('#' + attrs['data-href'])).then(noop, reject);
         }),
       Wait('.pop-usual.pop-exp'),
-      Click.Condition('.btn-usual-ok'),
+      Click.Condition('.btn-usual-ok,.btn-unclaimed'),
+
       Timeout(3000)
     ]);
 
@@ -126,10 +134,17 @@ exports = module.exports = (
   const startLeech = steps =>
     exec([
       () => (env.questCount = 0),
-      () => queue.fetch(),
+      () => {
+        logger.info('Fetching tweet...');
+        return queue.fetch();
+      },
       (context, tweet) =>
         new Promise((resolve, reject) => {
-          const options = { type: 'tryJoinRaid', raidCode: tweet.raid.code };
+          logger.info(tweet.boss.text, tweet.raid.code, tweet.raid.message);
+          const options = {
+            type: 'tryJoinRaid',
+            raidCode: tweet.raid.code
+          };
           run(Viramate(options))
             .then(result => checkJoinResult(result, steps))
             .then(resolve, reject);
@@ -155,6 +170,7 @@ exports['@require'] = [
   'env',
   'scenarioConfig',
   'server',
+  'worker',
   'logger',
   'require',
   'run',
