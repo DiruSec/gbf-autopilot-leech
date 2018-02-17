@@ -1,6 +1,6 @@
 {
   "name": "gbf-autopilot-leech",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Raid leeching extension for Granblue Autopilot",
   "main": "index.js",
   "repository": {
