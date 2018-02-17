@@ -89,8 +89,7 @@ exports = module.exports = (
           run(Location.Change('#' + attrs['data-href'])).then(noop, reject);
         }),
       Wait('.pop-usual.pop-exp'),
-      Click.Condition('.btn-usual-ok,.btn-unclaimed'),
-
+      Click.Condition('.btn-usual-ok,.btn-control.location-href'),
       Timeout(3000)
     ]);
 
