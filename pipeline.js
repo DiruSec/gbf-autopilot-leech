@@ -88,7 +88,7 @@ exports = module.exports = (
           run(Location.Wait('result_multi')).then(resolve, reject);
           run(Location.Change('#' + attrs['data-href'])).then(noop, reject);
         }),
-      Wait('.pop-usual.pop-exp'),
+      Wait('.pop-usual.pop-exp,.btn-control'),
       Click.Condition('.btn-usual-ok,.btn-control.location-href'),
       Timeout(3000)
     ]);
