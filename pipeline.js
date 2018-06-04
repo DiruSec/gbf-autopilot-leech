@@ -14,7 +14,6 @@ function destroyStream() {
 exports = module.exports = (
   env,
   scenarioConfig,
-  config,
   server,
   worker,
   logger,
