@@ -14,6 +14,7 @@ function destroyStream() {
 exports = module.exports = (
   env,
   scenarioConfig,
+  config,
   server,
   worker,
   logger,
@@ -71,10 +72,10 @@ exports = module.exports = (
     exec([
       Wait('.atx-lead-link'),
       () =>
-        exec(DefaultPipeline()).catch(err => {
-          logger.warn(err);
-          return false;
-        }),
+      exec(DefaultPipeline()).catch(err => {
+        logger.warn(err);
+        return false;
+      }),
       () => exec(steps)
     ]);
 
@@ -84,10 +85,10 @@ exports = module.exports = (
     exec([
       Element.Attributes('.btn-multi-raid.lis-raid', 'data-href'),
       (context, attrs) =>
-        new Promise((resolve, reject) => {
-          run(Location.Wait('result_multi')).then(resolve, reject);
-          run(Location.Change('#' + attrs['data-href'])).then(noop, reject);
-        }),
+      new Promise((resolve, reject) => {
+        run(Location.Wait('result_multi')).then(resolve, reject);
+        run(Location.Change('#' + attrs['data-href'])).then(noop, reject);
+      }),
       Wait('.pop-usual.pop-exp,.btn-control'),
       Click.Condition('.btn-usual-ok,.btn-control.location-href'),
       Timeout(3000)
@@ -98,7 +99,7 @@ exports = module.exports = (
       Location.Change('#quest/assist/unclaimed'),
       Wait('.atx-lead-link'),
       () =>
-        run(Check('.btn-multi-raid.lis-raid')).then(() => true, () => false),
+      run(Check('.btn-multi-raid.lis-raid')).then(() => true, () => false),
       (context, hasUnclaimed) => {
         if (hasUnclaimed) {
           return clearPendingBattle().then(() => checkPendingBattles(steps));
@@ -118,11 +119,11 @@ exports = module.exports = (
   const checkJoinResult = (result, steps) => {
     if (result === 'ok') {
       return enterBattle(steps);
-    } else if (result.indexOf('provide backup') >= 0) {
+    } else if (result.indexOf('provide backup') >= 0 || result.indexOf('参加できる') >= 0) {
       return waitToFinish(steps);
-    } else if (result.indexOf('pending') >= 0) {
+    } else if (result.indexOf('pending') >= 0 || result.indexOf('未確認') >= 0) {
       return checkPendingBattles(steps);
-    } else if (result.indexOf('refill') >= 0) {
+    } else if (result.indexOf('refill') >= 0 || result.indexOf('足りません') >= 0) {
       return refillBP(steps);
     } else {
       logger.warn('Unknown join raid status:', result);
@@ -138,16 +139,16 @@ exports = module.exports = (
         return queue.fetch();
       },
       (context, tweet) =>
-        new Promise((resolve, reject) => {
-          logger.info(tweet.boss.text, tweet.raid.code, tweet.raid.message);
-          const options = {
-            type: 'tryJoinRaid',
-            raidCode: tweet.raid.code
-          };
-          run(Viramate(options))
-            .then(result => checkJoinResult(result, steps))
-            .then(resolve, reject);
-        })
+      new Promise((resolve, reject) => {
+        logger.info(tweet.boss.text, tweet.raid.code, tweet.raid.message);
+        const options = {
+          type: 'tryJoinRaid',
+          raidCode: tweet.raid.code
+        };
+        run(Viramate(options))
+          .then(result => checkJoinResult(result, steps))
+          .then(resolve, reject);
+      })
     ]);
 
   const checkTreasure = steps =>
